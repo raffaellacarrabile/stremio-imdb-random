@@ -1,0 +1,16 @@
+{
+	"name": "stremio-addon-imdb",
+	"version": "0.0.1",
+	"description": "IMDb Watchlist Randomizer",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"axios": "^1.13.2",
+		"stremio-addon-sdk": "^1.2.0"
+	},
+	"devDependencies": {
+		"eslint": "^9.39.1"
+	}
+}
