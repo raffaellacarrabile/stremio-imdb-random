@@ -112,22 +112,29 @@ builder.defineCatalogHandler(async (args) => {
             };
         }
 
-        const item = await getRandomItem();
+        // --- MODIFICA QUI: Generiamo 10 film ---
+        const moviePromises = [];
+        for (let i = 0; i < 10; i++) {
+            moviePromises.push(getRandomItem());
+        }
 
-        // Bottone Refresh
+        // Aspettiamo che tutte le richieste a Cinemeta siano completate
+        const results = await Promise.all(moviePromises);
+        
+        // Filtriamo eventuali null (se un film non viene trovato dopo i tentativi)
+        const items = results.filter(item => item !== null);
+
+        // Bottone Refresh in cima
         const refreshBtn = {
             id: 'tt_refresh',
             type: 'movie',
-            name: '🔄 AGGIORNA',
+            name: '🔄 GENERA ALTRI 10',
             poster: 'https://dummyimage.com/600x900/000/fff&text=CLICCA+E+TORNA+INDIETRO',
-            description: 'Clicca qui e torna indietro per un nuovo film.'
+            description: 'Torna indietro e riapri per cambiare lista.'
         };
 
-        const items = [refreshBtn];
-        if (item) items.push(item);
-
         return {
-            metas: items,
+            metas: [refreshBtn, ...items], // Uniamo il tasto refresh ai 10 film
             cacheMaxAge: 0,
             staleRevalidate: 0,
             staleError: 0
@@ -140,4 +147,5 @@ builder.defineCatalogHandler(async (args) => {
 IMDB_WATCHLIST_IDS = loadCsvWatchlist(); // Carica la lista all'avvio
 const addonInterface = builder.getInterface();
 const port = process.env.PORT || 7000;
+
 serveHTTP(addonInterface, { port: port });
