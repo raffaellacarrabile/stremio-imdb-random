@@ -52,14 +52,14 @@ let IMDB_WATCHLIST_IDS = loadCsvWatchlist();
 const lastDate = getLastUpdateDate();
 
 const manifest = {
-    id: 'org.imdb.random.csv',
+    id: 'org.imdb.random.csv.v2', // <--- AGGIUNTO .v2 QUI
     version: '4.0.1',
     name: `IMDb Random (${lastDate})`,
     description: `Carica 900+ film. Ultimo aggiornamento: ${lastDate}`,
     resources: ['catalog'],
     types: ['movie', 'series'],
     catalogs: [{
-        id: 'imdb_csv_random',
+        id: 'imdb_csv_random_v2', // <--- AGGIUNTO _v2 QUI
         name: `IMDb CSV (${lastDate})`,
         type: 'movie',
         extra: [{ name: 'search', isRequired: false }]
@@ -101,14 +101,9 @@ builder.defineCatalogHandler(async (args) => {
         const results = await Promise.all(moviePromises);
         const items = results.filter(item => item !== null);
         
+        // Niente più bottone refresh, solo i film veri e propri!
         return {
-            metas: [{
-                id: 'tt_refresh',
-                type: 'movie',
-                name: `🔄 REFRESH (${lastDate})`,
-                poster: 'https://dummyimage.com/600x900/000/fff&text=CLICCA+E+TORNA+INDIETRO',
-                description: 'Aggiorna per nuovi film.'
-            }, ...items],
+            metas: items,
             cacheMaxAge: 0
         };
     }
@@ -120,4 +115,5 @@ builder.defineCatalogHandler(async (args) => {
 // ==========================================
 const port = process.env.PORT || 7000;
 serveHTTP(builder.getInterface(), { port: port });
+
 
