@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ==========================================
-// 1. FUNZIONE DATA (Per il titolo)
+// 1. FUNZIONE DATA
 // ==========================================
 function getLastUpdateDate() {
     try {
@@ -22,7 +22,7 @@ function getLastUpdateDate() {
 }
 
 // ==========================================
-// 2. FUNZIONE LETTURA CSV (Quella che mancava!)
+// 2. FUNZIONE LETTURA CSV
 // ==========================================
 function loadCsvWatchlist() {
     try {
@@ -46,20 +46,20 @@ function loadCsvWatchlist() {
 }
 
 // ==========================================
-// 3. CONFIGURAZIONE E MANIFEST
+// 3. CONFIGURAZIONE E MANIFEST (V2)
 // ==========================================
 let IMDB_WATCHLIST_IDS = loadCsvWatchlist();
 const lastDate = getLastUpdateDate();
 
 const manifest = {
-    id: 'org.imdb.random.csv.v2', // <--- AGGIUNTO .v2 QUI
+    id: 'org.imdb.random.csv.v2', // <--- NUOVO ID ADDON
     version: '4.0.1',
     name: `IMDb Random (${lastDate})`,
     description: `Carica 900+ film. Ultimo aggiornamento: ${lastDate}`,
     resources: ['catalog'],
     types: ['movie', 'series'],
     catalogs: [{
-        id: 'imdb_csv_random_v2', // <--- AGGIUNTO _v2 QUI
+        id: 'imdb_csv_random_v2', // <--- NUOVO ID CATALOGO
         name: `IMDb CSV (${lastDate})`,
         type: 'movie',
         extra: [{ name: 'search', isRequired: false }]
@@ -93,7 +93,8 @@ async function getRandomItem(retries = 8) {
 }
 
 builder.defineCatalogHandler(async (args) => {
-    if (args.id === 'imdb_csv_random') {
+    // ATTENZIONE: AGGIORNATO ANCHE QUI L'ID DEL CATALOGO
+    if (args.id === 'imdb_csv_random_v2') {
         if (IMDB_WATCHLIST_IDS.length === 0) {
             return { metas: [{ id: 'tt_error', type: 'movie', name: 'CSV VUOTO O MANCANTE' }] };
         }
@@ -101,9 +102,8 @@ builder.defineCatalogHandler(async (args) => {
         const results = await Promise.all(moviePromises);
         const items = results.filter(item => item !== null);
         
-        // Niente più bottone refresh, solo i film veri e propri!
         return {
-            metas: items,
+            metas: items, // <--- BOTTONE NERO RIMOSSO: SOLO FILM!
             cacheMaxAge: 0
         };
     }
@@ -115,5 +115,3 @@ builder.defineCatalogHandler(async (args) => {
 // ==========================================
 const port = process.env.PORT || 7000;
 serveHTTP(builder.getInterface(), { port: port });
-
-
