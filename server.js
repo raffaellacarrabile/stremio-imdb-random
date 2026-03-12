@@ -53,7 +53,7 @@ const lastDate = getLastUpdateDate();
 
 const manifest = {
     id: 'org.imdb.random.csv',
-    version: '4.0.0',
+    version: '4.0.1',
     name: `IMDb Random (${lastDate})`,
     description: `Carica 900+ film. Ultimo aggiornamento: ${lastDate}`,
     resources: ['catalog'],
@@ -120,3 +120,4 @@ builder.defineCatalogHandler(async (args) => {
 // ==========================================
 const port = process.env.PORT || 7000;
 serveHTTP(builder.getInterface(), { port: port });
+
